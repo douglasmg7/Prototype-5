@@ -25,25 +25,38 @@ public class Target : MonoBehaviour
         transform.position = RandomSpawnPosition();
     }
 
-    private void OnMouseDown() {
-        Instantiate(explosionParticle, transform.position, explosionParticle.transform.rotation);
-        Destroy(gameObject);
-        gameManager.UpdateScore(pointValue);
+    private void OnMouseDown()
+    {
+        if (gameManager.isGameActive)
+        {
+            Instantiate(explosionParticle, transform.position, explosionParticle.transform.rotation);
+            Destroy(gameObject);
+            gameManager.UpdateScore(pointValue);
+        }
+
     }
 
-    private void OnTriggerEnter(Collider other) {
+    private void OnTriggerEnter(Collider other)
+    {
         Destroy(gameObject);
+        if (!this.CompareTag("Bad"))
+        {
+            gameManager.gameOver();
+        }
     }
 
-    private Vector3 RandomForece(){
+    private Vector3 RandomForece()
+    {
         return Vector3.up * Random.Range(minForce, maxForce);
     }
 
-    private Vector3 RandomTorque(){
+    private Vector3 RandomTorque()
+    {
         return new Vector3(Random.Range(-maxTorque, maxTorque), Random.Range(-maxTorque, maxTorque), Random.Range(-maxTorque, maxTorque));
     }
 
-    private Vector3 RandomSpawnPosition() {
-        return new Vector3(Random.Range(-xRange ,xRange), ySpawnPosition);
+    private Vector3 RandomSpawnPosition()
+    {
+        return new Vector3(Random.Range(-xRange, xRange), ySpawnPosition);
     }
 }
