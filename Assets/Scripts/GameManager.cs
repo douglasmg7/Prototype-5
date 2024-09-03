@@ -15,45 +15,60 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI gameOverText;
     public Button restartButton;
     public bool isGameActive = true;
+    public GameObject titleScreen;
 
     private int score;
 
     // Start is called before the first frame update
     void Start()
     {
-        // isGameActive = true;
-        score = 0;
-        restartButton.gameObject.SetActive(false);
-        StartCoroutine(SpawnTarget());
-        UpdateScore(0);
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
-    IEnumerator SpawnTarget(){
-        while(isGameActive){
+    IEnumerator SpawnTarget()
+    {
+        while (isGameActive)
+        {
             yield return new WaitForSeconds(spawnRate);
             Instantiate(targets[Random.Range(0, targets.Count)]);
         }
     }
 
-    public void UpdateScore(int scoreToAdd){
+    public void UpdateScore(int scoreToAdd)
+    {
         score += scoreToAdd;
         textScore.text = "Score: " + score;
     }
 
-    public void gameOver(){
+    public void gameOver()
+    {
         isGameActive = false;
         gameOverText.gameObject.SetActive(true);
         restartButton.gameObject.SetActive(true);
     }
 
-    public void restartGame(){
+    public void restartGame()
+    {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void StartGame(int dificulty)
+    {
+        Debug.Log("dificulty: " + dificulty);
+        spawnRate /= dificulty;
+        Debug.Log("spawnRate: " + spawnRate);
+        titleScreen.gameObject.SetActive(false);
+        isGameActive = true;
+        score = 0;
+        restartButton.gameObject.SetActive(false);
+        StartCoroutine(SpawnTarget());
+        UpdateScore(0);
     }
 
 }
