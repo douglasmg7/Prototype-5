@@ -4,32 +4,52 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System;
 
 public class GameManagerX : MonoBehaviour
 {
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI gameOverText;
+    public TextMeshProUGUI timerText;
+
     public GameObject titleScreen;
-    public Button restartButton; 
+    public Button restartButton;
 
     public List<GameObject> targetPrefabs;
 
     private int score;
+    private float timeTotal = 6;
+    private float timeRemaining = 0;
     private float spawnRate = 1.5f;
     public bool isGameActive;
 
-    private float spaceBetweenSquares = 2.5f; 
+    private float spaceBetweenSquares = 2.5f;
     private float minValueX = -3.75f; //  x value of the center of the left-most square
     private float minValueY = -3.75f; //  y value of the center of the bottom-most square
-    
-    // Start the game, remove title screen, reset score, and adjust spawnRate based on difficulty button clicked
-    public void StartGame()
+
+
+    private void Update()
     {
-        spawnRate /= 5;
+        if (isGameActive)
+        {
+            timeRemaining -= Time.deltaTime;
+            UpdateTimer();
+            if (timeRemaining < 0){
+                GameOver();
+            }
+        }
+        Debug.Log("Update from Game Manager. " + timeRemaining);
+    }
+
+    // Start the game, remove title screen, reset score, and adjust spawnRate based on difficulty button clicked
+    public void StartGame(int difficulty)
+    {
+        spawnRate /= difficulty;
         isGameActive = true;
         StartCoroutine(SpawnTarget());
         score = 0;
         UpdateScore(0);
+        InitTimer();
         titleScreen.SetActive(false);
     }
 
@@ -39,13 +59,13 @@ public class GameManagerX : MonoBehaviour
         while (isGameActive)
         {
             yield return new WaitForSeconds(spawnRate);
-            int index = Random.Range(0, targetPrefabs.Count);
+            int index = UnityEngine.Random.Range(0, targetPrefabs.Count);
 
             if (isGameActive)
             {
                 Instantiate(targetPrefabs[index], RandomSpawnPosition(), targetPrefabs[index].transform.rotation);
             }
-            
+
         }
     }
 
@@ -63,21 +83,32 @@ public class GameManagerX : MonoBehaviour
     // Generates random square index from 0 to 3, which determines which square the target will appear in
     int RandomSquareIndex()
     {
-        return Random.Range(0, 4);
+        return UnityEngine.Random.Range(0, 4);
     }
 
     // Update score with value from target clicked
     public void UpdateScore(int scoreToAdd)
     {
         score += scoreToAdd;
-        scoreText.text = "score";
+        scoreText.text = "score: " + score;
+    }
+
+    public void InitTimer()
+    {
+        timeRemaining = timeTotal;
+    }
+
+    // Update timer to finish the fame.
+    public void UpdateTimer()
+    {
+        timerText.text = "timer: " + (int)Math.Ceiling(timeRemaining);
     }
 
     // Stop game, bring up game over text and restart button
     public void GameOver()
     {
         gameOverText.gameObject.SetActive(true);
-        restartButton.gameObject.SetActive(false);
+        restartButton.gameObject.SetActive(true);
         isGameActive = false;
     }
 

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class TargetX : MonoBehaviour
@@ -27,15 +28,13 @@ public class TargetX : MonoBehaviour
     }
 
     // When target is clicked, destroy it, update score, and generate explosion
-    private void OnMouseEnter()
-    {
+    private void OnMouseDown() {
         if (gameManagerX.isGameActive)
         {
             Destroy(gameObject);
             gameManagerX.UpdateScore(pointValue);
             Explode();
         }
-               
     }
 
     // Generate a random spawn position based on a random index from 0 to 3
